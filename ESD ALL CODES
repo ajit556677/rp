@@ -1,0 +1,184 @@
+Arithmetic operator 
+ORG 0000H;
+MOV A, #25H;
+MOV B, #15H;
+ADD A, B;
+MOV 30H, A;
+END;
+
+ORG 0000H;
+MOV A, #25H;
+MOV B, #15H;
+SUBB A, B;
+MOV 30H, A;
+END;
+
+ORG 0000H;
+MOV A, #05H;
+MOV B, #04H;
+MUL AB;
+END;
+
+ORG 0000H;
+MOV A, #09H;
+MOV B, #02H;
+DIV AB;
+END;
+
+
+
+LED using 8051
+ORG 0000H;
+START:
+SETB P1.3;
+ACALL DELAY;
+CLR P1.3
+ACALL DELAY;
+SJMP SATRT;
+DELAY:
+MOV R1,#255;
+L1:
+MOV R2,# 255;
+DJNZ R2,L2;
+DJNZ R1,L1;
+RET;
+END
+
+LCD using 8051
+ORG 0000H;
+RS EQU P2.0;
+RW EQU P2.1;
+EN EQU P2.2;
+START:
+    ACALL LCD_INIT;
+    MOV A,#'H';
+    ACALL LCD_DATA;
+    MOV A,#'E';
+    ACALL LCD_DATA;
+    MOV A,#'L';
+    ACALL LCD_DATA;
+    MOV A,#'L';
+    ACALL LCD_DATA;
+    MOV A,#'O';
+    ACALL LCD_DATA;
+HERE: SJMP HERE;
+LCD_INIT:
+    MOV A,#38H  ;
+    ACALL LCD_CMD;
+
+    MOV A,#0EH      ; 
+    ACALL LCD_CMD;
+
+    MOV A,#01H      ; 
+    ACALL LCD_CMD;
+
+    MOV A,#06H      ; 
+    ACALL LCD_CMD;
+    RET;
+LCD_CMD:
+    MOV P1,A;
+    CLR RS;
+    CLR RW;
+    SETB EN;
+    ACALL DELAY;
+    CLR EN;
+    RET;
+LCD_DATA:
+    MOV P1,A;
+    SETB RS;
+    CLR RW;
+    SETB EN;
+    ACALL DELAY;
+    CLR EN;
+    RET;
+DELAY:
+    MOV R2,#255;
+D1: MOV R1,#255;
+D2: DJNZ R1,D2;
+    DJNZ R2,D1;
+    RET;
+END
+
+ARM microcontroller  for arithmetic and data manipulation
+AREA DATA_OP, CODE, READONLY
+        ENTRY
+
+START
+        MOV     R0, #12      ; First number (1100)
+        MOV     R1, #10      ; Second number (1010)
+
+        MOV     R2, R0       ; Data transfer
+        AND     R3, R0, R1   ; Bitwise AND
+        ORR     R4, R0, R1   ; Bitwise OR
+        EOR     R5, R0, R1   ; Bitwise XOR
+        MOV     R6, R0, LSL #1 ; Shift left by 1 bit
+
+STOP
+        B       STOP
+
+        END
+Led based on arm microcontroller
+
+#include <LPC21xx.H>                       /* LPC21xx definitions  */
+void ledonoff(void);
+void delay(void);
+int main()
+{
+	IODIR1 = 0xFFFFFFFF;               // Make port bits P1.16......P1.23 as output
+	IODIR0 = 0xFFFFFFFF;    
+	ledonoff();			               // Initialize LED
+    return 0;
+
+}
+
+void ledonoff(void)
+{
+	while(1)
+	{
+		IOSET1 = 0xFFFFFFFF;				//Make port bits high
+		IOSET0 = 0xFFFFFFFF;				
+		delay();  
+		IOCLR1 = 0xFFFFFFFF;				//Make port bits low
+		IOCLR0 = 0xFFFFFFFF;
+		delay();
+					
+}
+}
+void delay(void)
+{
+	int i;
+	char k;
+	for(k=0;k<=8;k++)
+	{
+		for(i=0;i<=400000;i++) ;
+}
+}
+  	 LCD based on arm microcontroller
+
+	
+CODE:
+#include "prototype.h"
+
+int main()
+{
+    PINSEL0 |= 0x00000000;
+    IODIR0 |= LCD_ALL;
+
+    lcd_init();
+
+    while(1)
+    {
+        lcdcmd(0x01);
+        lcdcmd(0x80);
+        lcd_print(" HELLO");
+        Delay(1000);
+
+        //lcdcmd(0x01);
+        lcdcmd(0xC0);
+        lcd_print(" S.v.p.m");
+        Delay(1000);
+
+        lcdcmd(0x01);
+    }
+}
+
